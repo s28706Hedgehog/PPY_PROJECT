@@ -4,6 +4,7 @@ from task.TaskCategory import TaskCategory
 from _datetime import datetime
 import json
 
+
 myTask = Task.create_unfinished_task(
     'Simple Task',
     TaskPriority.URGENT_IMPORTANT,
@@ -15,3 +16,7 @@ myTask = Task.create_unfinished_task(
 
 result = json.dumps(myTask.to_dict())
 print(result)
+
+simpleFile = open("simpleFile.json", 'w')
+simpleFile.write(result)
+simpleFile.close()
