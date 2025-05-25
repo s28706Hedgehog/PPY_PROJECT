@@ -1,0 +1,5 @@
+Enums in python:
+    https://docs.python.org/3/library/enum.html
+    https://stackoverflow.com/questions/43862184/associating-string-representations-with-an-enum-that-uses-integer-values
+    https://docs.python.org/3/library/enum.html
+        section ->  __init__(self, *args, **kwds)¶
