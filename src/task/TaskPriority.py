@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Priority(Enum):
+class TaskPriority(Enum):
     URGENT_IMPORTANT = 1, 'UrgentImportant'
     NOT_URGENT_IMPORTANT = 2, 'NotUrgentImportant'
     URGENT_NOT_IMPORTANT = 3, 'UrgentNotImportant'
