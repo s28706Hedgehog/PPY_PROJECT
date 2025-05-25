@@ -1,10 +1,9 @@
 from _datetime import datetime
 
 from src.task.TaskCategory import TaskCategory
-from src.task.TaskExceptions import InvalidStateChangeException, CorruptedTaskDataException, \
-    NotAllowedTaskOperationException
 from src.task.TaskPriority import TaskPriority
 from src.task.TaskState import TaskState
+from src.task.TaskValidator import TaskValidator
 
 
 class Task:
@@ -44,25 +43,11 @@ class Task:
         return cls(name, TaskState.TO_DO, priority, category, description, begin_date, None, deadline_date, command)
 
     def start_task(self):
-        if self.state is TaskState.FINISHED:
-            raise InvalidStateChangeException(
-                "Can't start a task that's already finished. Consider creating a new task.")
-        if self.state is TaskState.IN_PROGRESS:
-            raise InvalidStateChangeException("Can't start a task that's already running.")
-        if self.state is TaskState.TERMINATED:
-            raise InvalidStateChangeException("Can't start a task that has already been terminated")
+        TaskValidator.validate_start_task(self)
         self.state = TaskState.IN_PROGRESS
 
     def finish_task(self):
-        if self.state is TaskState.FINISHED:
-            raise InvalidStateChangeException("Can't finish task that's already finished.")
-        if self.state is TaskState.TERMINATED:
-            raise InvalidStateChangeException("Can't finish task that has already been terminated")
-
-        if self.finishDate is not None:
-            raise CorruptedTaskDataException(
-                "Can't finish task that already has a finish date. "
-                "The task should either already be finished or should not have a finish date.")
+        TaskValidator.validate_finish_task(self)
         self.finishDate = datetime.now()
         self.state = TaskState.FINISHED
 
@@ -70,18 +55,12 @@ class Task:
         self.description = new_description
 
     def change_command(self, new_command: str):
-        if self.state is TaskState.IN_PROGRESS:
-            raise NotAllowedTaskOperationException(
-                "Can't modify task's command while it is running. Pause task first.")
+        TaskValidator.validate_change_command(self)
         self.command = new_command
 
     def pause_task(self):
-        if self.state is TaskState.TERMINATED:
-            raise InvalidStateChangeException("Can't pause a task that has already been terminated")
-        if self.state is TaskState.FINISHED:
-            raise InvalidStateChangeException("Can't pause a task that has already been finished")
-        if self.state is TaskState.TO_DO:
-            raise InvalidStateChangeException("Can't pause a task that hasn't been started yet")
+        TaskValidator.validate_pause_task(self)
+        self.state = TaskState.PAUSED
 
     def to_dict(self):
         return {'name': self.name, 'state': self.state.order, 'priority': self.priority.order,
