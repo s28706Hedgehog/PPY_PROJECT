@@ -9,3 +9,15 @@ data-types for __slots__
 
 maybe article not focused on the problem but helped to deal with ModuleName.ClassName.anything
     https://labex.io/tutorials/python-how-to-prevent-duplicate-module-names-419874
+
+JSON conversion
+    https://www.geeksforgeeks.org/convert-class-object-to-json-in-python/
+
+documentation convention
+    https://www.geeksforgeeks.org/python-docstrings/
+
+date time format
+    https://ioflood.com/blog/python-datetime-to-string/
+
+type annotation for None
+    https://stackoverflow.com/questions/19202633/python-3-type-hinting-for-none

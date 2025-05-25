@@ -1,10 +1,10 @@
 from _datetime import datetime
-from TaskState import TaskState
-from TaskCategory import TaskCategory
-from TaskPriority import TaskPriority
-from TaskExceptions import InvalidStateChangeException
-from TaskExceptions import CorruptedTaskDataException
-from TaskExceptions import NotAllowedTaskOperationException
+
+from src.task.TaskCategory import TaskCategory
+from src.task.TaskExceptions import InvalidStateChangeException, CorruptedTaskDataException, \
+    NotAllowedTaskOperationException
+from src.task.TaskPriority import TaskPriority
+from src.task.TaskState import TaskState
 
 
 class Task:
@@ -16,12 +16,12 @@ class Task:
     category: TaskCategory
     description: str
     beginDate: datetime
-    finishDate: datetime
+    finishDate: datetime | None
     deadlineDate: datetime
     command: str
 
     def __init__(self, name: str, state: TaskState, priority: TaskPriority, category: TaskCategory, description: str,
-                 begin_date: datetime, finish_date: datetime, deadline_date: datetime, command: str):
+                 begin_date: datetime, finish_date: datetime | None, deadline_date: datetime, command: str):
         self.name = name
         self.state = state
         self.priority = priority
@@ -69,3 +69,10 @@ class Task:
             raise NotAllowedTaskOperationException(
                 "Can't modify task command while task is running. Stop task to change it's command.")
         self.command = new_command
+
+    def to_dict(self):
+        return {'name': self.name, 'state': self.state.order, 'priority': self.priority.order,
+                'category': self.category.order,
+                'description': self.description, 'beginDate': self.beginDate.isoformat(),
+                'finishDate': self.finishDate.isoformat() if self.finishDate else None,
+                'deadlineDate': self.deadlineDate.isoformat(), 'command': self.command}
