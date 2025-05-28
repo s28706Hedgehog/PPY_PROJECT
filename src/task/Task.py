@@ -37,9 +37,9 @@ class Task:
         self.commandProcess = None
 
     @classmethod
-    def create_finished_task(cls, name: str, priority: TaskPriority, category: TaskCategory, description: str,
-                             begin_date: datetime, finish_date: datetime, deadline_date: datetime, command: str):
-        return cls(name, TaskState.FINISHED, priority, category, description, begin_date, finish_date, deadline_date,
+    def create_task(cls, name: str, state: TaskState, priority: TaskPriority, category: TaskCategory, description: str,
+                    begin_date: datetime, finish_date: datetime, deadline_date: datetime, command: str):
+        return cls(name, state, priority, category, description, begin_date, finish_date, deadline_date,
                    command)
 
     @classmethod
@@ -87,3 +87,15 @@ class Task:
                 'beginDate': self.beginDate.isoformat() if self.beginDate else None,
                 'finishDate': self.finishDate.isoformat() if self.finishDate else None,
                 'deadlineDate': self.deadlineDate.isoformat(), 'command': self.command}
+
+    def __str__(self):
+        return (
+            f"Task '{self.name}':\n"
+            f"  State: {self.state}\n"
+            f"  Priority: {self.priority}\n"
+            f"  Category: {self.category}\n"
+            f"  Description: {self.description}\n"
+            f"  Begin datetime: {self.beginDate.isoformat() if self.beginDate else 'None'}\n"
+            f"  Finish datetime: {self.finishDate.isoformat() if self.finishDate else 'None'}\n"
+            f"  Deadline datetime: {self.deadlineDate.isoformat() if self.finishDate else 'None'}\n"
+            f"  Command: {self.command}")

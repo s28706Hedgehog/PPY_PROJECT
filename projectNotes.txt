@@ -41,3 +41,5 @@ threads + subprocess
     https://stackoverflow.com/questions/45401640/killing-sub-process-that-run-inside-a-thread
     https://www.geeksforgeeks.org/multithreading-python-set-1/
     https://www.datacamp.com/tutorial/python-subprocess
+
+TODO: return types of functions

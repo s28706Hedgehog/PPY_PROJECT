@@ -4,7 +4,13 @@ from src.task.TaskPriority import TaskPriority
 from src.task.TaskCategory import TaskCategory
 import json
 from src.task.TaskState import TaskState
+from src.loader import JsonTaskLoader
 
+tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
+print(tasks[0])
+print(tasks[1])
+
+"""
 myTask = Task.create_unfinished_task(
     'Simple Task',
     TaskPriority.URGENT_IMPORTANT,
@@ -14,6 +20,7 @@ myTask = Task.create_unfinished_task(
     "python print('anything')")
 
 myTask.start_task()
+"""
 
 """
 result = json.dumps(myTask.to_dict())

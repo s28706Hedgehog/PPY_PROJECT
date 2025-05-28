@@ -1,0 +1,11 @@
+{
+  "name": "S2",
+  "state": 1,
+  "priority": 1,
+  "category": 2,
+  "description": "S2",
+  "beginDate": null,
+  "finishDate": null,
+  "deadlineDate": "2025-05-28T03:41:45.672818",
+  "command": "S2"
+}
