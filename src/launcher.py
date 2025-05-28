@@ -7,9 +7,12 @@ from src.task.TaskState import TaskState
 from src.loader import JsonTaskLoader
 from menu import Menu
 
+# TODO: Log system
+
 tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
 menu = Menu(tasks)
-menu.clear_console()
+menu.show_menu(menu.main_options, menu.main_actions)
+# menu.clear_console()
 
 """
 myTask = Task.create_unfinished_task(

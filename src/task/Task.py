@@ -90,10 +90,12 @@ class Task:
 
     def terminate_task(self):
         TaskValidator.validate_terminate_task(self)
-        self.commandProcess.terminate()
-        self.commandProcess.wait()  # await termination
+        if self.commandProcess:
+            self.commandProcess.terminate()
+            self.commandProcess.wait()  # await termination
+        if self.commandThread:
+            self.commandThread.join()
         self.finishDate = datetime.now()
-        self.commandThread.join()
         self.state = TaskState.TERMINATED
 
     def change_description(self, new_description: str):
