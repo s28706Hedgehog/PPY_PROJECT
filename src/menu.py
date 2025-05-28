@@ -29,8 +29,8 @@ class Menu:
         self.all_tasks_options = {0: "back", 1: "add task", 2: "manage task", 3: "back to main window"}
 
         self.main_actions = {0: self.handle_quit, 1: self.handle_browse_tasks}
-        self.task_actions = {0: None}
-        self.all_tasks_actions = {0: None, 1: self.handle_add_task, 2: None,
+        self.task_actions = {0: None, 1: self.}
+        self.all_tasks_actions = {0: None, 1: self.handle_add_task, 2: self.handle_manage_task,
                                   3: self.show_menu}
 
     def show_menu(self, options: _options_type, actions: _actions_type, *args, **kwargs):
@@ -104,7 +104,7 @@ class Menu:
             Menu.clear_console()
             for task in self.tasks:
                 print(task)
-            resTaskId = int(input("Enter id of task you want to manage"))
+            resTaskId = int(input("Enter id of task you want to manage "))
             for task in self.tasks:
                 if task.id == resTaskId:
                     isValid = True
@@ -120,6 +120,13 @@ class Menu:
     def handle_main_options(self):
         Menu.clear_console()
         self.show_menu(self.main_options, self.main_actions)
+
+    def handle_start_task(self, taskId: int):
+        for task in self.tasks:
+            if taskId == task.id:
+                found = True
+                task.start_task()
+                break
 
     @classmethod
     def clear_console(cls):
