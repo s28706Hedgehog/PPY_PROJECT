@@ -6,13 +6,13 @@ import json
 from src.task.TaskState import TaskState
 from src.loader import JsonTaskLoader
 from menu import Menu
+import time
 
 # TODO: Log system
 
-tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
+tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\PPY_Task_Manager\rsc")
 menu = Menu(tasks)
 menu.show_menu(menu.main_options, menu.main_actions)
-# menu.clear_console()
 
 """
 myTask = Task.create_unfinished_task(

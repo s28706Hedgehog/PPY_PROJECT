@@ -75,13 +75,16 @@ class Task:
         self.state = TaskState.IN_PROGRESS
         self.beginDate = datetime.now()
         self.commandThread = threading.Thread(target=self.__get_command_process)
+        print("Task: " + self.name + " started")
         self.commandThread.start()
 
     def __get_command_process(self):
-        self.commandProcess = subprocess.Popen([self.command], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                               text=True, shell=True)
+        self.commandProcess = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                               text=True, shell=True, encoding='utf-8', universal_newlines=True,
+                                               errors='ignore')
         output, errors = self.commandProcess.communicate()
-        print("Output: ", output)
+        print("Task name: " + self.name + "\nfinished work with output: ",
+              '\n', output, '\n', errors, '\n\n')
         self.__finish_task()
 
     def __finish_task(self):
@@ -123,5 +126,5 @@ class Task:
             f"  Description: {self.description}\n"
             f"  Begin datetime: {self.beginDate.isoformat() if self.beginDate else 'None'}\n"
             f"  Finish datetime: {self.finishDate.isoformat() if self.finishDate else 'None'}\n"
-            f"  Deadline datetime: {self.deadlineDate.isoformat() if self.finishDate else 'None'}\n"
+            f"  Deadline datetime: {self.deadlineDate.isoformat() if self.deadlineDate else 'None'}\n"
             f"  Command: {self.command}")

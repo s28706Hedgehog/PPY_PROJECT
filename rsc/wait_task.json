@@ -1,11 +1,11 @@
 {
-  "name": "Simple Task",
+  "name": "Waiter",
   "state": 1,
   "priority": 1,
   "category": 2,
-  "description": "Simple description",
+  "description": "Terminate me, I'm waiting 30 sec",
   "beginDate": null,
   "finishDate": null,
   "deadlineDate": "2025-05-28T03:41:45.672818",
-  "command": "Simple code to execute"
+  "command": "powershell -Command \"Start-Sleep -Seconds 30\""
 }

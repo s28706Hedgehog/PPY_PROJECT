@@ -20,24 +20,25 @@ class Menu:
     main_actions: _actions_type
     all_tasks_actions: _actions_type
 
-    # main_options -> all_tasks_options -> task_options
     def __init__(self, tasks: list[Task]):
         self.tasks = tasks
         self.task_options = {0: "back", 1: "start task", 2: "terminate task", 3: "edit command",
                              4: "edit description"}
         self.main_options = {0: "quit", 1: "browse tasks", 2: "show statistics"}
-        self.all_tasks_options = {0: "back", 1: "add task", 2: "manage task", 3: "back to main window"}
+        self.all_tasks_options = {0: "back to main window", 1: "add task", 2: "manage task"}
 
         self.main_actions = {0: self.handle_quit, 1: self.handle_browse_tasks}
-        self.task_actions = {0: None, 1: self.}
-        self.all_tasks_actions = {0: None, 1: self.handle_add_task, 2: self.handle_manage_task,
-                                  3: self.show_menu}
+        self.task_actions = {0: None, 1: self.handle_start_task, 2: self.handle_terminate_task,
+                             3: self.handle_edit_command,
+                             4: self.handle_edit_description}
+        self.all_tasks_actions = {0: self.handle_main_options, 1: self.handle_add_task, 2: self.handle_manage_task}
 
     def show_menu(self, options: _options_type, actions: _actions_type, *args, **kwargs):
         while True:
             self.print_options(options)
             res = self.handle_user_input(options)
             if res is not None:
+                self.clear_console()
                 actions[res](*args, **kwargs)
                 break
 
@@ -97,7 +98,16 @@ class Menu:
             print(f"Failed to add task: {e}")
 
     def handle_browse_tasks(self):
+        self.print_tasks()
         self.show_menu(self.all_tasks_options, self.all_tasks_actions)
+
+    def print_tasks(self):
+        for task in self.tasks:
+            print('Name [', task.name, '] ID [', task.id, '] command [', task.command, ']', end='\n\n')
+
+    def print_tasks_detailed(self):
+        for task in self.tasks:
+            print(task, end='\n\n')
 
     def handle_manage_task(self):
         while True:
@@ -121,19 +131,58 @@ class Menu:
         Menu.clear_console()
         self.show_menu(self.main_options, self.main_actions)
 
-    def handle_start_task(self, taskId: int):
+    def handle_start_task(self, task_id: int):
+        res = self.find_task(task_id)
+        if res is not None:
+            res.start_task()
+        self.clear_console()
+        self.print_tasks()
+        self.show_menu(self.all_tasks_options, self.all_tasks_actions)
+
+    def handle_terminate_task(self, task_id: int):
+        res = self.find_task(task_id)
+        if res is not None:
+            res.terminate_task()
+        self.clear_console()
+        self.print_tasks()
+        self.show_menu(self.all_tasks_options, self.all_tasks_actions)
+
+    def handle_edit_command(self, task_id: int):
+        res = self.find_task(task_id)
+        if res is not None:
+            new_command = input("Enter new command")
+            res.change_command(new_command)
+        self.clear_console()
+        self.print_tasks()
+        self.show_menu(self.all_tasks_options, self.all_tasks_actions)
+
+    def handle_edit_description(self, task_id: int):
+        res = self.find_task(task_id)
+        if res is not None:
+            new_description = input("Enter new description")
+            res.change_description(new_description)
+        self.clear_console()
+        self.print_tasks()
+        self.show_menu(self.all_tasks_options, self.all_tasks_actions)
+
+    def find_task(self, task_id: int) -> Task | None:
         for task in self.tasks:
-            if taskId == task.id:
-                found = True
-                task.start_task()
-                break
+            if task_id == task.id:
+                return task
+        else:
+            print(TaskNotFoundException("DAMMIT, enter proper task id"))
+        return None
 
     @classmethod
     def clear_console(cls):
-        # print(100 * '\n')
-        print("\n")
+        print(1 * '\n')
 
 
 class IllegalMenuInputException(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+class TaskNotFoundException(Exception):
     def __init__(self, message: str):
         super().__init__(message)

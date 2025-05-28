@@ -1,11 +1,11 @@
 {
-  "name": "S2",
+  "name": "Java version",
   "state": 1,
   "priority": 1,
   "category": 2,
-  "description": "S2",
+  "description": "Returns java version",
   "beginDate": null,
   "finishDate": null,
   "deadlineDate": "2025-05-28T03:41:45.672818",
-  "command": "S2"
+  "command": "java -version"
 }
