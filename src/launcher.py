@@ -1,9 +1,9 @@
-from task.Task import Task
-from task.TaskPriority import TaskPriority
-from task.TaskCategory import TaskCategory
 from _datetime import datetime
+from src.task.Task import Task
+from src.task.TaskPriority import TaskPriority
+from src.task.TaskCategory import TaskCategory
 import json
-
+from src.task.TaskState import TaskState
 
 myTask = Task.create_unfinished_task(
     'Simple Task',
@@ -11,12 +11,15 @@ myTask = Task.create_unfinished_task(
     TaskCategory.PERSONAL,
     'Simple description',
     datetime.now(),
-    datetime.now(),
-    'Simple code to execute')
+    "python print('anything')")
 
+myTask.start_task()
+
+"""
 result = json.dumps(myTask.to_dict())
 print(result)
 
 simpleFile = open("simpleFile.json", 'w')
 simpleFile.write(result)
 simpleFile.close()
+"""

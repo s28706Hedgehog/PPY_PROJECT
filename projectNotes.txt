@@ -12,12 +12,32 @@ maybe article not focused on the problem but helped to deal with ModuleName.Clas
 
 JSON conversion
     https://www.geeksforgeeks.org/convert-class-object-to-json-in-python/
+    https://www.geeksforgeeks.org/read-json-file-using-python/
 
 documentation convention
     https://www.geeksforgeeks.org/python-docstrings/
 
-date time format
+datetime format
     https://ioflood.com/blog/python-datetime-to-string/
 
 type annotation for None
     https://stackoverflow.com/questions/19202633/python-3-type-hinting-for-none
+
+my routine in forgetting .gitignore
+    https://stackoverflow.com/questions/71922766/removing-pycache-from-git-repository
+
+circular import error
+    https://builtin.com/articles/python-circular-import
+
+type annotation with circular import error
+    https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
+
+marking function as "don't touch it"
+    https://www.geeksforgeeks.org/private-methods-in-python/
+
+threads + subprocess
+    https://www.geeksforgeeks.org/multithreading-python-set-1/
+    https://stackoverflow.com/questions/5631624/how-to-get-exit-code-when-using-python-subprocess-communicate-method
+    https://stackoverflow.com/questions/45401640/killing-sub-process-that-run-inside-a-thread
+    https://www.geeksforgeeks.org/multithreading-python-set-1/
+    https://www.datacamp.com/tutorial/python-subprocess
