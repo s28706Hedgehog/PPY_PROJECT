@@ -7,9 +7,22 @@ import subprocess
 import threading
 
 
+def id_gen():
+    curr = 1
+    while True:
+        yield curr
+        curr += 1
+
+
+_id_generator = id_gen()
+_id_registry = set()
+
+
 class Task:
-    __slots__ = ['name', 'state', 'priority', 'category', 'description', 'beginDate', 'finishDate', 'deadlineDate',
+    __slots__ = ['id', 'name', 'state', 'priority', 'category', 'description', 'beginDate', 'finishDate',
+                 'deadlineDate',
                  'command', 'commandThread', 'commandProcess']
+    id: int
     name: str
     state: TaskState
     priority: TaskPriority
@@ -24,6 +37,7 @@ class Task:
 
     def __init__(self, name: str, state: TaskState, priority: TaskPriority, category: TaskCategory, description: str,
                  begin_date: datetime | None, finish_date: datetime | None, deadline_date: datetime, command: str):
+        self.id = Task._get_available_id()
         self.name = name
         self.state = state
         self.priority = priority
@@ -35,6 +49,15 @@ class Task:
         self.command = command
         self.commandThread = None
         self.commandProcess = None
+
+    @classmethod
+    def _get_available_id(cls):
+        while True:
+            test_id = next(_id_generator)
+            if not _id_registry.__contains__(test_id):
+                _id_registry.add(test_id)
+                break
+        return test_id
 
     @classmethod
     def create_task(cls, name: str, state: TaskState, priority: TaskPriority, category: TaskCategory, description: str,
@@ -81,7 +104,7 @@ class Task:
         self.command = new_command
 
     def to_dict(self):
-        return {'name': self.name, 'state': self.state.order, 'priority': self.priority.order,
+        return {'id': self.id, 'name': self.name, 'state': self.state.order, 'priority': self.priority.order,
                 'category': self.category.order,
                 'description': self.description,
                 'beginDate': self.beginDate.isoformat() if self.beginDate else None,
@@ -91,6 +114,7 @@ class Task:
     def __str__(self):
         return (
             f"Task '{self.name}':\n"
+            f"  Id: {self.id}\n"
             f"  State: {self.state}\n"
             f"  Priority: {self.priority}\n"
             f"  Category: {self.category}\n"

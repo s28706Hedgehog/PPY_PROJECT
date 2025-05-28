@@ -5,10 +5,11 @@ from src.task.TaskCategory import TaskCategory
 import json
 from src.task.TaskState import TaskState
 from src.loader import JsonTaskLoader
+from menu import Menu
 
 tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
-print(tasks[0])
-print(tasks[1])
+menu = Menu(tasks)
+menu.clear_console()
 
 """
 myTask = Task.create_unfinished_task(

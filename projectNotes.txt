@@ -42,4 +42,6 @@ threads + subprocess
     https://www.geeksforgeeks.org/multithreading-python-set-1/
     https://www.datacamp.com/tutorial/python-subprocess
 
+recursive files
+    https://www.geeksforgeeks.org/how-to-use-glob-function-to-find-files-recursively-in-python/
 TODO: return types of functions
