@@ -1,18 +1,18 @@
-from _datetime import datetime
-from src.task.Task import Task
-from src.task.TaskPriority import TaskPriority
-from src.task.TaskCategory import TaskCategory
-import json
-from src.task.TaskState import TaskState
 from src.loader import JsonTaskLoader
-from menu import Menu
-import time
+from src.menu.MenuRefactor import ConsoleWindowManager, MainConsoleWindow
 
 # TODO: Log system
 
-tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\PPY_Task_Manager\rsc")
-menu = Menu(tasks)
-menu.show_menu(menu.main_options, menu.main_actions)
+tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
+# menu = Menu(tasks)
+# menu.show_menu(menu.main_options, menu.main_actions)
+
+# ConsoleMenu.show_menu()
+
+print("Tasks" + str(tasks))
+window_manager = ConsoleWindowManager(tasks)
+window_manager.add_new_window(MainConsoleWindow(tasks))
+window_manager.show_current_window()
 
 """
 myTask = Task.create_unfinished_task(

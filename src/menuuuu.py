@@ -117,11 +117,11 @@ class Menu:
             resTaskId = int(input("Enter id of task you want to manage "))
             for task in self.tasks:
                 if task.id == resTaskId:
-                    isValid = True
+                    is_valid = True
                     break
                 else:
-                    isValid = False
-            if isValid:
+                    is_valid = False
+            if is_valid:
                 break
             else:
                 print(IllegalMenuInputException("My friend, coop with me, it's so annoying to write this"))
