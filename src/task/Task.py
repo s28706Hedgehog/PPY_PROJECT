@@ -7,14 +7,33 @@ import subprocess
 import threading
 
 
-def id_gen():
+def task_id_gen():
     curr = 1
     while True:
         yield curr
         curr += 1
 
 
-_id_generator = id_gen()
+def log_id_gen():
+    curr = 1
+    while True:
+        yield curr
+        curr += 1
+
+
+class Logger:
+    _id_generator = log_id_gen()
+    _fileio_lock = threading.Lock()
+
+    @classmethod
+    def log(cls, log_msg: str):
+        with cls._fileio_lock:
+            with open('taskLogs.txt', 'a') as file:
+                file.write("Log: " + str(next(cls._id_generator)) + " " + str(datetime.now()) + "\n")
+                file.write(log_msg + "\n")
+
+
+_id_generator = task_id_gen()
 _id_registry = set()
 
 
@@ -83,8 +102,11 @@ class Task:
                                                text=True, shell=True, encoding='utf-8', universal_newlines=True,
                                                errors='ignore')
         output, errors = self.commandProcess.communicate()
+        print()
+        print("#" * 10)
         print("Task name: " + self.name + "\nfinished work with output: ",
-              '\n', output, '\n', errors, '\n\n')
+              output, '\n', errors)
+        print("#" * 10)
         self.__finish_task()
 
     def __finish_task(self):

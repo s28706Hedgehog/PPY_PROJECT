@@ -48,4 +48,13 @@ recursive files
 change global scope value inside function
     https://www.w3schools.com/python/python_variables_global.asp
 
+type-hinting callable
+    https://www.reddit.com/r/learnpython/comments/1fn2n4n/type_hinting_the_return_value_of_callable_in/
+
+singleton
+    https://www.geeksforgeeks.org/singleton-pattern-in-python-a-complete-guide/
+
+synchronized block:
+    https://theorangeduck.com/page/synchronized-python
+
 TODO: Check for return types of functions

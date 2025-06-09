@@ -4,9 +4,18 @@ import os
 from collections.abc import Callable
 from src.task.TaskExceptions import InvalidStateChangeException, NotAllowedTaskOperationException, \
     CorruptedTaskDataException
+from enum import Enum
+
+
+class ActionResultEnum(Enum):
+    DO_NOTHING = 1,
+    SHOW_NEXT = 2
+    BACK = 3,
+    QUIT = 4,
+
 
 _options_type = dict[int, str]
-_actions_type = dict[int, Callable]
+_actions_type = dict[int, Callable[..., ActionResultEnum]]
 
 
 class Menu:

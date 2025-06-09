@@ -18,7 +18,7 @@ def show_menu(self, options: _options_type, actions: _actions_type, *args, **kwa
         self.print_master_options(options)
         res = self.get_user_input(options)
         if res is not None:
-            self.clear_console()
+            clear_console()
             actions[res](*args, **kwargs)
             break
 
