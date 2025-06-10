@@ -1,5 +1,5 @@
 import json
-from src.task.Task import Task
+from src.task.Task import Task, TaskState
 from typing import List
 import glob
 import os
@@ -16,7 +16,7 @@ class JsonTaskLoader:
             data_deadline_date = data['deadlineDate']
             result_task = Task.create_task(
                 data['name'],
-                data['state'],
+                TaskState.get_task_state(data['state']),
                 data['priority'],
                 data['category'],
                 data['description'],

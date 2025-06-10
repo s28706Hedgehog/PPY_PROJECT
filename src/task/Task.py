@@ -30,7 +30,7 @@ class Logger:
         with cls._fileio_lock:
             with open('taskLogs.txt', 'a') as file:
                 file.write("Log: " + str(next(cls._id_generator)) + " " + str(datetime.now()) + "\n")
-                file.write(log_msg + "\n")
+                file.write(log_msg + "\n\n")
 
 
 _id_generator = task_id_gen()
@@ -102,11 +102,7 @@ class Task:
                                                text=True, shell=True, encoding='utf-8', universal_newlines=True,
                                                errors='ignore')
         output, errors = self.commandProcess.communicate()
-        print()
-        print("#" * 10)
-        print("Task name: " + self.name + "\nfinished work with output: ",
-              output, '\n', errors)
-        print("#" * 10)
+        Logger.log("Task name: " + self.name + "\nfinished work with output: " + output)
         self.__finish_task()
 
     def __finish_task(self):

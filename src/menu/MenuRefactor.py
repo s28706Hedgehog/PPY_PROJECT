@@ -189,7 +189,8 @@ class MainConsoleWindow(ConsoleWindowAbstract):
 
     def print_tasks(self):
         for task in self.tasks:
-            print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', end='\n\n')
+            print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
+                  task.state, ']', end='\n\n')
 
 
 class TaskConsoleWindow(ConsoleWindowAbstract):
@@ -213,11 +214,11 @@ class TaskConsoleWindow(ConsoleWindowAbstract):
         return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
 
     def edit_command(self) -> ActionResult:
-        # Ik, no validation. But to be fair, I would kms before validating executable commands
         print("""Suggested command ( Telnet enabled required ):
         telnet telehack.com
         starwars
         """)
+        # Ik, no validation. But to be fair, I would kms before validating executable commands
         new_command = input("Enter new command ( highly not recommended to do id manually :D ) ")
         self.selected_task.change_command(new_command)
         return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
