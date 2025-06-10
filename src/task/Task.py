@@ -24,11 +24,12 @@ def log_id_gen():
 class Logger:
     _id_generator = log_id_gen()
     _fileio_lock = threading.Lock()
+    _log_file_name = 'taskLogs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
 
     @classmethod
     def log(cls, log_msg: str):
         with cls._fileio_lock:
-            with open('taskLogs.txt', 'a') as file:
+            with open(cls._log_file_name, 'a') as file:
                 file.write("Log: " + str(next(cls._id_generator)) + " " + str(datetime.now()) + "\n")
                 file.write(log_msg + "\n\n")
 
