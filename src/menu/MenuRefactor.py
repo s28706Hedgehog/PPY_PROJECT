@@ -200,12 +200,31 @@ class TaskConsoleWindow(ConsoleWindowAbstract):
         super().__init__(
             {1: "start task", 2: "terminate task", 3: "edit command",
              4: "edit description"},
-            {1: self.start_task}
+            {1: self.start_task, 2: self.terminate_task, 3: self.edit_command, 4: self.edit_description}
         )
         self.selected_task = task
 
     def start_task(self) -> ActionResult:
         self.selected_task.start_task()
+        return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
+
+    def terminate_task(self) -> ActionResult:
+        self.selected_task.terminate_task()
+        return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
+
+    def edit_command(self) -> ActionResult:
+        # Ik, no validation. But to be fair, I would kms before validating executable commands
+        print("""Suggested command ( Telnet enabled required ):
+        telnet telehack.com
+        starwars
+        """)
+        new_command = input("Enter new command ( highly not recommended to do id manually :D ) ")
+        self.selected_task.change_command(new_command)
+        return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
+
+    def edit_description(self) -> ActionResult:
+        new_description = input("Enter new description: ")
+        self.selected_task.change_description(new_description)
         return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
 
 
