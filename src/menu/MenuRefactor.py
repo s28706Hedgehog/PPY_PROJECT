@@ -5,6 +5,8 @@ from src.task.TaskExceptions import InvalidStateChangeException, \
 from src.task.Task import Task, TaskState, TaskPriority, TaskCategory
 from enum import Enum
 from typing import Optional
+import matplotlib.pyplot as plt
+from collections import defaultdict
 
 
 class MenuSettings:
@@ -159,6 +161,7 @@ class ConsoleWindowManager:
                     if isinstance(window, ConsoleWindowAbstract):
                         action_result = window.actions[user_response]()  # That's so annoying to track
                     elif isinstance(window, ConsoleWindowParamAbstract):
+                        # Relic of the past
                         action_result = window.actions[user_response](window.var_dict, window.var_tuple)
                     if action_result is not None:
                         match action_result.action_result_type:
@@ -250,7 +253,7 @@ class MainConsoleWindow(ConsoleWindowAbstract):
     def __init__(self, tasks: list[Task], settings: MenuSettings):
         super().__init__(
             {1: "browse tasks", 2: "show statistics"},
-            {1: self.browse_tasks, 2: None}
+            {1: self.browse_tasks, 2: self.next_stats_window}
         )
         self.tasks = tasks
         self.settings = settings
@@ -261,6 +264,9 @@ class MainConsoleWindow(ConsoleWindowAbstract):
     def browse_tasks(self) -> ActionResult:
         self.print_tasks()
         return ActionResult(ActionResultTypeEnum.SHOW_NEXT, BrowseTasksConsoleWindow(self.tasks, self.settings))
+
+    def next_stats_window(self):
+        return ActionResult(ActionResultTypeEnum.SHOW_NEXT, StatisticsConsoleWindow(self.tasks))
 
 
 class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
@@ -421,6 +427,34 @@ class TaskConsoleWindow(ConsoleWindowAbstract):
         new_description = input("Enter new description: ")
         self.selected_task.change_description(new_description)
         return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
+
+
+class StatisticsConsoleWindow(ConsoleWindowAbstract):
+    __slots__ = ['tasks']
+    tasks: list[Task]
+
+    def __init__(self, tasks: list[Task]):
+        super().__init__(
+            {1: 'generate category chart'},
+            {1: self.gen_category_chart}
+        )
+        self.tasks = tasks
+
+    def gen_category_chart(self) -> ActionResult:
+        if self.tasks:
+            cat_count_dict = self.count_categories()
+            plt.bar(cat_count_dict.keys(), cat_count_dict.values())
+            plt.xlabel('category')
+            plt.ylabel('count')
+            plt.title('Tasks grouped by category')
+            plt.show()
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+    def count_categories(self) -> dict[str, int]:
+        res = defaultdict(int)
+        for tsk in self.tasks:
+            res[str(tsk.category)] += 1
+        return res
 
 
 class IllegalMenuInputException(Exception):

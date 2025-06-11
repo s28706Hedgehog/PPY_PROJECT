@@ -5,6 +5,7 @@ from src.task.TaskState import TaskState
 from src.task.TaskValidator import TaskValidator
 import subprocess
 import threading
+import os
 
 
 def task_id_gen():
@@ -24,7 +25,7 @@ def log_id_gen():
 class Logger:
     _id_generator = log_id_gen()
     _fileio_lock = threading.Lock()
-    _log_file_name = 'taskLogs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
+    _log_file_name = 'logs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
 
     @classmethod
     def log(cls, log_msg: str):
@@ -103,7 +104,7 @@ class Task:
                                                text=True, shell=True, encoding='utf-8', universal_newlines=True,
                                                errors='ignore')
         output, errors = self.commandProcess.communicate()
-        Logger.log("Task name: " + self.name + "\nfinished work with output: " + output)
+        Logger.log("Task name: " + self.name + "\nfinished work with output: " + output + errors)
         self.__finish_task()
 
     def __finish_task(self):

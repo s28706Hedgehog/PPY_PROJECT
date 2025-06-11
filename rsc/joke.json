@@ -2,7 +2,7 @@
   "name": "Jokes",
   "state": 1,
   "priority": 1,
-  "category": 2,
+  "category": 1,
   "description": "Generates some jokes for you",
   "beginDate": null,
   "finishDate": null,

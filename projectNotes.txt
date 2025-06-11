@@ -59,4 +59,7 @@ synchronized block:
 
 string concatenation
     https://waymoot.org/home/python_string/
+
+usage of += with dict
+    https://www.geeksforgeeks.org/python-increment-value-in-dictionary/
 TODO: Check for return types of functions

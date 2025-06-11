@@ -11,3 +11,13 @@ class TaskCategory(Enum):
     def __init__(self, order: int, label: str):
         self.order = order
         self.label = label
+
+    @staticmethod
+    def get_task_category(task_id: int):
+        match task_id:
+            case 1:
+                return TaskCategory.WORK
+            case 2:
+                return TaskCategory.PERSONAL
+            case _d:
+                return None

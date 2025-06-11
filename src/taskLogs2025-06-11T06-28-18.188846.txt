@@ -1,4 +1,0 @@
-Log: 1 2025-06-11 06:29:14.090622
-Task name: simple name
-finished work with output: 
-
