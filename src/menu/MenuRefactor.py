@@ -1,7 +1,8 @@
+from _datetime import datetime
 from collections.abc import Callable
 from src.task.TaskExceptions import InvalidStateChangeException, NotAllowedTaskOperationException, \
     CorruptedTaskDataException
-from src.task.Task import Task
+from src.task.Task import Task, TaskState, TaskPriority, TaskCategory
 from enum import Enum
 from typing import Optional
 
@@ -11,6 +12,7 @@ class ActionResultTypeEnum(Enum):
     SHOW_NEXT = 2
     SHOW_PREVIOUS = 3,
     QUIT = 4,
+    SHOW_CURRENT = 5
 
 
 class ActionResult:
@@ -94,6 +96,8 @@ class ConsoleWindowManager:
                                 self.show_current_window()
                             case ActionResultTypeEnum.QUIT:
                                 self.quit()
+                            case ActionResultTypeEnum.SHOW_CURRENT:
+                                self.show_current_window()
                             case _default:
                                 raise UnsupportedOperationException
                     break
@@ -152,17 +156,18 @@ class ConsoleWindowManager:
     def quit(self):
         print("Trying to terminate all the running tasks")
         for task in self.tasks:
-            try:
-                task.terminate_task()
-            except CorruptedTaskDataException | InvalidStateChangeException as e:
-                print("Failed to terminate task: " + str(task))
-                print("Reason: " + e)
+            if task.state == TaskState.IN_PROGRESS:
+                try:
+                    task.terminate_task()
+                except CorruptedTaskDataException | InvalidStateChangeException as e:
+                    print("Failed to terminate task: " + str(task))
+                    print("Reason: " + e)
         print("Goodbye my spiky friend")
         exit(0)
 
 
 class MainConsoleWindow(ConsoleWindowAbstract):
-    __slots__ = ['tasks_ref', 'tasks']
+    __slots__ = ['tasks']
     tasks: list[Task]
 
     def __init__(self, tasks: list[Task]):
@@ -172,11 +177,84 @@ class MainConsoleWindow(ConsoleWindowAbstract):
         )
         self.tasks = tasks
 
+    def print_tasks(self):
+        for task in self.tasks:
+            print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
+                  task.state, ']', end='\n\n')
+
     def browse_tasks(self) -> ActionResult:
+        self.print_tasks()
+        return ActionResult(ActionResultTypeEnum.SHOW_NEXT, BrowseTasksConsoleWindow(self.tasks))
+
+
+class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
+    __slots__ = ['tasks']
+    tasks: list[Task]
+
+    def __init__(self, tasks: list[Task]):
+        super().__init__(
+            {1: 'select task', 2: 'settings', 3: 'add task'},
+            {1: self.select_task, 2: None, 3: self.add_task}
+        )
+        self.tasks = tasks
+
+    def add_task(self) -> ActionResult:
+        print("Task creation, you may enter '0' to stop task creation")
+
+        name_input = input('Enter task name: ')
+        if name_input == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+        tsk_name = name_input
+
+        print("Allowed priorities: ")
+        print(TaskPriority._member_names_)
+        priority_input = input("Enter priority: ")
+        if priority_input == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+        print("Allowed categories: ")
+        print(TaskCategory._member_names_)
+        category_input = input("Enter category: ")
+        if category_input == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+        tsk_description = input("Enter task description: ")
+        if tsk_description == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+        print("Example date '2025-05-28'")
+        date_input = input("Enter task deadline date: ")
+        if date_input == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+        print("Sample command: 'ping 127.0.0.1 -n 20'")
+        tsk_command = input("Enter task command: ")
+        if tsk_command == '0':
+            return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+        try:
+            new_task = Task.create_unfinished_task(
+                name=tsk_name,
+                priority=TaskPriority[priority_input],
+                category=TaskCategory[category_input],
+                description=tsk_description,
+                deadline_date=datetime.fromisoformat(date_input),
+                command=tsk_command
+            )
+
+            self.tasks.append(new_task)
+            print("Task successfully added")
+        except Exception as e:
+            print(f"Failed to add task: {e}")
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+    def select_task(self) -> ActionResult:
         self.print_tasks()
         while True:
             try:
                 usr_input = int(input("Enter id of task you would like to use: "))
+                if usr_input == 0:
+                    return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
             except ValueError:
                 raise ValueError("Text you entered is not an integer :/")
             for tsk in self.tasks:
@@ -185,7 +263,7 @@ class MainConsoleWindow(ConsoleWindowAbstract):
                     clear_console()
                     return ActionResult(ActionResultTypeEnum.SHOW_NEXT, TaskConsoleWindow(selected_task))
             else:
-                raise TaskNotFoundException("You entered wrong task id, please try again")
+                print(TaskNotFoundException("You entered wrong task id, please try again"))
 
     def print_tasks(self):
         for task in self.tasks:
@@ -214,10 +292,7 @@ class TaskConsoleWindow(ConsoleWindowAbstract):
         return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
 
     def edit_command(self) -> ActionResult:
-        print("""Suggested command ( Telnet enabled required ):
-        telnet telehack.com
-        starwars
-        """)
+        print("Suggested command: ping 127.0.0.1 -n 20")
         # Ik, no validation. But to be fair, I would kms before validating executable commands
         new_command = input("Enter new command ( highly not recommended to do id manually :D ) ")
         self.selected_task.change_command(new_command)
