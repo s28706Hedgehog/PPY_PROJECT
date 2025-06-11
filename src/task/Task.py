@@ -6,6 +6,7 @@ from src.task.TaskValidator import TaskValidator
 import subprocess
 import threading
 import os
+from pathlib import Path
 
 
 def task_id_gen():
@@ -22,15 +23,31 @@ def log_id_gen():
         curr += 1
 
 
+def get_log_dir_file_path():
+    logger_cls_path = Path(__file__).resolve()
+    return str(logger_cls_path.parent.parent.parent) + '\\logs'
+
+
+def get_log_file_name() -> str:
+    return 'logs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
+
+def setup_log_file_path():
+    # https://stackoverflow.com/questions/273192/how-do-i-create-a-directory-and-any-missing-parent-directories
+    dir_path = get_log_dir_file_path()
+    # Path(dir_path).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    return dir_path + "\\" + get_log_file_name()
+
 class Logger:
     _id_generator = log_id_gen()
     _fileio_lock = threading.Lock()
-    _log_file_name = 'logs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
+    _log_file_path = setup_log_file_path()
 
     @classmethod
     def log(cls, log_msg: str):
         with cls._fileio_lock:
-            with open(cls._log_file_name, 'a') as file:
+            with open(cls._log_file_path, 'a') as file:
                 file.write("Log: " + str(next(cls._id_generator)) + " " + str(datetime.now()) + "\n")
                 file.write(log_msg + "\n\n")
 
