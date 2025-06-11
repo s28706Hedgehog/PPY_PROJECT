@@ -1,0 +1,11 @@
+{
+  "name": "System info",
+  "state": 1,
+  "priority": 3,
+  "category": 1,
+  "description": "Prints system specifics and more",
+  "beginDate": null,
+  "finishDate": null,
+  "deadlineDate": "2099-05-28T03:41:45.672818",
+  "command": "systeminfo"
+}

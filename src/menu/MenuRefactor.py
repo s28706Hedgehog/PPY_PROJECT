@@ -336,7 +336,7 @@ class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
         return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
 
     def select_task(self) -> ActionResult:
-        self.print_tasks()
+        print(self.settings.get_tasks_print_msg(self.tasks))
         while True:
             try:
                 usr_input = int(input("Enter id of task you would like to use: ( '0' to go back )"))
