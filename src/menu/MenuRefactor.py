@@ -477,8 +477,8 @@ class StatisticsConsoleWindow(ConsoleWindowAbstract):
             cat_count_dict = self.calc_complete_times()
             if cat_count_dict:
                 plt.bar(cat_count_dict.keys(), cat_count_dict.values())
-                plt.xlabel('task id')
-                plt.ylabel('completion time ( microseconds )')
+                plt.xlabel('task id | task name')
+                plt.ylabel('completion time ( seconds )')
                 plt.title('Time to complete task')
                 plt.show()
             else:
@@ -490,7 +490,7 @@ class StatisticsConsoleWindow(ConsoleWindowAbstract):
         res = defaultdict(int)
         for tsk in self.tasks:
             if tsk.state == TaskState.FINISHED or tsk.state == TaskState.TERMINATED:
-                res[str(tsk.id)] += (tsk.finishDate.date() - tsk.beginDate.date()).microseconds
+                res[str(tsk.id) + ' | ' + tsk.name] += (tsk.finishDate - tsk.beginDate).total_seconds()
         return res
 
 

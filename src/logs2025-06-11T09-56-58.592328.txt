@@ -1,7 +1,0 @@
-Log: 1 2025-06-11 09:57:09.028803
-Task name: Java version
-finished work with output: java version "22.0.2" 2024-07-16
-Java(TM) SE Runtime Environment (build 22.0.2+9-70)
-Java HotSpot(TM) 64-Bit Server VM (build 22.0.2+9-70, mixed mode, sharing)
-
-
