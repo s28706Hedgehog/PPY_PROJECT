@@ -435,8 +435,8 @@ class StatisticsConsoleWindow(ConsoleWindowAbstract):
 
     def __init__(self, tasks: list[Task]):
         super().__init__(
-            {1: 'generate category chart'},
-            {1: self.gen_category_chart}
+            {1: 'generate category chart', 2: 'generate priority chart', 3: 'generate avg completion time chart'},
+            {1: self.gen_category_chart, 2: self.gen_priority_chart, 3: self.gen_avg_complete_time_chart}
         )
         self.tasks = tasks
 
@@ -455,6 +455,48 @@ class StatisticsConsoleWindow(ConsoleWindowAbstract):
         for tsk in self.tasks:
             res[str(tsk.category)] += 1
         return res
+
+    def gen_priority_chart(self) -> ActionResult:
+        if self.tasks:
+            cat_count_dict = self.count_priorities()
+            plt.bar(cat_count_dict.keys(), cat_count_dict.values())
+            plt.xlabel('priority')
+            plt.ylabel('count')
+            plt.title('Tasks grouped by priority')
+            plt.show()
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+    def count_priorities(self) -> dict[str, int]:
+        res = defaultdict(int)
+        for tsk in self.tasks:
+            res[str(tsk.priority)] += 1
+        return res
+
+    def gen_avg_complete_time_chart(self) -> ActionResult:
+        if self.tasks:
+            cat_count_dict = self.calc_complete_times()
+            if cat_count_dict:
+                plt.bar(cat_count_dict.keys(), cat_count_dict.values())
+                plt.xlabel('task id')
+                plt.ylabel('completion time ( microseconds )')
+                plt.title('Time to complete task')
+                plt.show()
+            else:
+                print(DataNotAvailableException("There's 0 tasks that finished / terminated"))
+
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+    def calc_complete_times(self) -> dict[str, int]:
+        res = defaultdict(int)
+        for tsk in self.tasks:
+            if tsk.state == TaskState.FINISHED or tsk.state == TaskState.TERMINATED:
+                res[str(tsk.id)] += (tsk.finishDate.date() - tsk.beginDate.date()).microseconds
+        return res
+
+
+class DataNotAvailableException(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
 
 
 class IllegalMenuInputException(Exception):

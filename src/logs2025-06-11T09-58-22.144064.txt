@@ -1,0 +1,17 @@
+Log: 1 2025-06-11 09:58:37.349331
+Task name: Jokes
+finished work with output: What do you do on a remote island? Try and find the TV island it belongs to.  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100    76  100    76    0     0    314      0 --:--:-- --:--:-- --:--:--   316
+
+
+Log: 2 2025-06-11 09:58:43.588858
+Task name: Java version
+finished work with output: java version "22.0.2" 2024-07-16
+Java(TM) SE Runtime Environment (build 22.0.2+9-70)
+Java HotSpot(TM) 64-Bit Server VM (build 22.0.2+9-70, mixed mode, sharing)
+
+

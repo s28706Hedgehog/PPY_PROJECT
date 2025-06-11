@@ -1,7 +1,7 @@
 {
   "name": "Waiter",
   "state": 1,
-  "priority": 1,
+  "priority": 3,
   "category": 2,
   "description": "Terminate me, I'm waiting 30 sec",
   "beginDate": null,

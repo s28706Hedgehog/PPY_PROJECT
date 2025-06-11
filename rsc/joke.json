@@ -1,7 +1,7 @@
 {
   "name": "Jokes",
   "state": 1,
-  "priority": 1,
+  "priority": 2,
   "category": 1,
   "description": "Generates some jokes for you",
   "beginDate": null,

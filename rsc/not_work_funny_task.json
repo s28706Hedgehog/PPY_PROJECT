@@ -1,7 +1,7 @@
 {
   "name": "Funny thing",
   "state": 1,
-  "priority": 1,
+  "priority": 3,
   "category": 1,
   "description": "Try me :D",
   "beginDate": null,
