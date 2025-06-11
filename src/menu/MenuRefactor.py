@@ -8,18 +8,27 @@ from typing import Optional
 
 
 class MenuSettings:
-    __slots__ = ['task_filter', 'task_sort', 'task_print', 'task_print_allowed', 'is_sort_asc']
-    task_filter: list[str]
-    task_sort: list[str]
+    __slots__ = ['task_filter', 'task_filter_allowed', 'task_sort', 'task_sort_allowed', 'task_print',
+                 'task_print_allowed', 'sort_ascending']
+    task_filter: dict[str: list]
+    task_filter_allowed: list[str]
+    task_sort: str
+    task_sort_allowed: list[str]
     task_print: list[str]
     task_print_allowed: list[str]
-    is_sort_asc: bool
+    sort_ascending: bool
 
     def __init__(self):
         self.task_print_allowed = ['id', 'name', 'state', 'priority', 'category', 'description', 'beginDate',
                                    'finishDate', 'deadlineDate', 'command', 'commandThread', 'commandProcess']
         self.task_print = ['id', 'name', 'command', 'state']
-        self.is_sort_asc = True
+        self.task_sort_allowed = ['id', 'name', 'state', 'priority', 'category', 'beginDate', 'finishDate',
+                                  'deadlineDate']
+        self.task_sort = 'id'
+        self.sort_ascending = True
+
+        self.task_filter = {}
+        self.task_filter_allowed = ['id', 'name', 'state', 'priority', 'category', 'deadlineDate']
 
     def get_task_print_msg(self, task: Task) -> str:
         msg_list = []
@@ -46,24 +55,27 @@ class MenuSettings:
     def add_filter(self, flt: str):
         pass
 
-    def add_sort(self, srt: str):
-        pass
+    def change_sort(self, srt: str):
+        if srt in self.task_sort_allowed:
+            self.task_sort = srt
+            return
+        raise WrongSettingException("Failed to change sort option")
 
-    def remove_sort(self, srt: str):
-        pass
+    def change_sort_direction(self):
+        self.sort_ascending = not self.sort_ascending
 
     def add_print(self, prt: str):
         if not self.task_print.__contains__(prt):
             if self.task_print_allowed.__contains__(prt):
                 self.task_print.append(prt)
                 return
-        raise WrongSettingException("failed to add print option")
+        raise WrongSettingException("Failed to add print option")
 
     def remove_print(self, prt: str):
         if self.task_print.__contains__(prt):
             self.task_print.remove(prt)
             return
-        raise WrongSettingException("failed to remove print option")
+        raise WrongSettingException("Failed to remove print option")
 
 
 class WrongSettingException(Exception):
@@ -348,9 +360,14 @@ class MenuSettingsConsoleWindow(ConsoleWindowAbstract):
         super().__init__(
             {1: 'add filter', 2: 'remove filter', 3: 'change sort', 4: 'change sort direction',
              5: 'add task print data', 6: 'remove task print data'},
-            {1: None, 2: None, 3: None, 4: None, 5: self.add_print_data, 6: self.remove_print_data}
+            {1: self.not_implemented, 2: self.not_implemented, 3: self.not_implemented, 4: self.not_implemented,
+             5: self.add_print_data, 6: self.remove_print_data}
         )
         self.settings = settings
+
+    def not_implemented(self) -> ActionResult:
+        print('Not implemented')
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
 
     def add_print_data(self) -> ActionResult:
         print('Data allowed to print: ' + str(self.settings.task_print_allowed))
