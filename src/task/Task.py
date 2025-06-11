@@ -31,6 +31,7 @@ def get_log_dir_file_path():
 def get_log_file_name() -> str:
     return 'logs' + str(datetime.now().isoformat().replace(':', '-')) + '.txt'
 
+
 def setup_log_file_path():
     # https://stackoverflow.com/questions/273192/how-do-i-create-a-directory-and-any-missing-parent-directories
     dir_path = get_log_dir_file_path()
@@ -38,6 +39,7 @@ def setup_log_file_path():
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
     return dir_path + "\\" + get_log_file_name()
+
 
 class Logger:
     _id_generator = log_id_gen()
