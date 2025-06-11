@@ -1,5 +1,5 @@
 import json
-from src.task.Task import Task, TaskState
+from src.task.Task import Task, TaskState, TaskPriority
 from typing import List
 import glob
 import os
@@ -17,7 +17,7 @@ class JsonTaskLoader:
             result_task = Task.create_task(
                 data['name'],
                 TaskState.get_task_state(data['state']),
-                data['priority'],
+                TaskPriority.get_task_priority(data['priority']),
                 data['category'],
                 data['description'],
                 datetime.fromisoformat(data_begin_date) if data_begin_date else None,

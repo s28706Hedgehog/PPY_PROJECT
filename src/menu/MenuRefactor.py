@@ -1,6 +1,6 @@
 from _datetime import datetime
 from collections.abc import Callable
-from src.task.TaskExceptions import InvalidStateChangeException, NotAllowedTaskOperationException, \
+from src.task.TaskExceptions import InvalidStateChangeException, \
     CorruptedTaskDataException
 from src.task.Task import Task, TaskState, TaskPriority, TaskCategory
 from enum import Enum
@@ -8,16 +8,18 @@ from typing import Optional
 
 
 class MenuSettings:
-    __slots__ = ['task_filter', 'task_sort', 'task_print', 'task_print_allowed']
+    __slots__ = ['task_filter', 'task_sort', 'task_print', 'task_print_allowed', 'is_sort_asc']
     task_filter: list[str]
     task_sort: list[str]
     task_print: list[str]
     task_print_allowed: list[str]
+    is_sort_asc: bool
 
     def __init__(self):
         self.task_print_allowed = ['id', 'name', 'state', 'priority', 'category', 'description', 'beginDate',
                                    'finishDate', 'deadlineDate', 'command', 'commandThread', 'commandProcess']
         self.task_print = ['id', 'name', 'command', 'state']
+        self.is_sort_asc = True
 
     def get_task_print_msg(self, task: Task) -> str:
         msg_list = []
@@ -27,7 +29,7 @@ class MenuSettings:
                 msg_list.append(field_name)
                 msg_list.append(' [')
                 msg_list.append(str(task.get_field_by_name(field_name)))
-                msg_list.append('] ')
+                msg_list.append('], ')
 
         return ''.join(msg_list)
 
@@ -37,6 +39,36 @@ class MenuSettings:
             tsk_msg_list.append(self.get_task_print_msg(tsk))
             tsk_msg_list.append('\n\n')
         return ''.join(tsk_msg_list)
+
+    def remove_filter(self, flt: str):
+        pass
+
+    def add_filter(self, flt: str):
+        pass
+
+    def add_sort(self, srt: str):
+        pass
+
+    def remove_sort(self, srt: str):
+        pass
+
+    def add_print(self, prt: str):
+        if not self.task_print.__contains__(prt):
+            if self.task_print_allowed.__contains__(prt):
+                self.task_print.append(prt)
+                return
+        raise WrongSettingException("failed to add print option")
+
+    def remove_print(self, prt: str):
+        if self.task_print.__contains__(prt):
+            self.task_print.remove(prt)
+            return
+        raise WrongSettingException("failed to remove print option")
+
+
+class WrongSettingException(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
 
 
 class ActionResultTypeEnum(Enum):
@@ -213,25 +245,27 @@ class MainConsoleWindow(ConsoleWindowAbstract):
 
     def print_tasks(self):
         print(self.settings.get_tasks_print_msg(self.tasks))
-        #for task in self.tasks:
-        #    print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
-        #          task.state, ']', end='\n\n')
 
     def browse_tasks(self) -> ActionResult:
         self.print_tasks()
-        return ActionResult(ActionResultTypeEnum.SHOW_NEXT, BrowseTasksConsoleWindow(self.tasks))
+        return ActionResult(ActionResultTypeEnum.SHOW_NEXT, BrowseTasksConsoleWindow(self.tasks, self.settings))
 
 
 class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
-    __slots__ = ['tasks']
+    __slots__ = ['tasks', 'settings']
     tasks: list[Task]
+    settings: MenuSettings
 
-    def __init__(self, tasks: list[Task]):
+    def __init__(self, tasks: list[Task], settings: MenuSettings):
         super().__init__(
             {1: 'select task', 2: 'settings', 3: 'add task'},
-            {1: self.select_task, 2: None, 3: self.add_task}
+            {1: self.select_task, 2: self.show_settings_menu, 3: self.add_task}
         )
         self.tasks = tasks
+        self.settings = settings
+
+    def show_settings_menu(self) -> ActionResult:
+        return ActionResult(ActionResultTypeEnum.SHOW_NEXT, MenuSettingsConsoleWindow(self.settings))
 
     def add_task(self) -> ActionResult:
         print("Task creation, you may enter '0' to stop task creation")
@@ -287,9 +321,9 @@ class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
         self.print_tasks()
         while True:
             try:
-                usr_input = int(input("Enter id of task you would like to use: "))
+                usr_input = int(input("Enter id of task you would like to use: ( '0' to go back )"))
                 if usr_input == 0:
-                    return ActionResult(ActionResultTypeEnum.SHOW_PREVIOUS, None)
+                    return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
             except ValueError:
                 raise ValueError("Text you entered is not an integer :/")
             for tsk in self.tasks:
@@ -304,6 +338,39 @@ class BrowseTasksConsoleWindow(ConsoleWindowAbstract):
         for task in self.tasks:
             print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
                   task.state, ']', end='\n\n')
+
+
+class MenuSettingsConsoleWindow(ConsoleWindowAbstract):
+    __slots__ = ['settings']
+    settings: MenuSettings
+
+    def __init__(self, settings: MenuSettings):
+        super().__init__(
+            {1: 'add filter', 2: 'remove filter', 3: 'change sort', 4: 'change sort direction',
+             5: 'add task print data', 6: 'remove task print data'},
+            {1: None, 2: None, 3: None, 4: None, 5: self.add_print_data, 6: self.remove_print_data}
+        )
+        self.settings = settings
+
+    def add_print_data(self) -> ActionResult:
+        print('Data allowed to print: ' + str(self.settings.task_print_allowed))
+        print('Currently turned on: ' + str(self.settings.task_print))
+        usr_print = input("Enter data to be printed ( one from above, enter '0' to back ): ")
+        try:
+            self.settings.add_print(usr_print)
+        except WrongSettingException as e:
+            print("I hate writing this, enter proper data again [" + str(e) + ']')
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
+
+    def remove_print_data(self) -> ActionResult:
+        print('Data allowed to print: ' + str(self.settings.task_print_allowed))
+        print('Currently turned on: ' + str(self.settings.task_print))
+        usr_print = input("Enter data to be removed from printing ( one from above, enter '0' to back ): ")
+        try:
+            self.settings.remove_print(usr_print)
+        except WrongSettingException as e:
+            print("I hate writing this, enter proper data again [" + str(e) + ']')
+        return ActionResult(ActionResultTypeEnum.SHOW_CURRENT, None)
 
 
 class TaskConsoleWindow(ConsoleWindowAbstract):
