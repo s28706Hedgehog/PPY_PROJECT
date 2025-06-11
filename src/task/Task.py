@@ -93,6 +93,7 @@ class Task:
 
     def start_task(self):
         TaskValidator.validate_start_task(self)
+
         self.state = TaskState.IN_PROGRESS
         self.beginDate = datetime.now()
         self.commandThread = threading.Thread(target=self.__get_command_process)
