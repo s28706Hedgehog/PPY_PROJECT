@@ -1,11 +1,11 @@
 from src.loader import JsonTaskLoader
-from src.menu.MenuRefactor import ConsoleWindowManager, MainConsoleWindow
+from src.menu.MenuRefactor import ConsoleWindowManager, MainConsoleWindow, MenuSettings
 
 tasks = JsonTaskLoader.load_all_tasks(r"C:\Users\jerzy\Desktop\TaskManager\rsc")
 
 print("Tasks" + str(tasks))
 window_manager = ConsoleWindowManager(tasks)
-window_manager.add_new_window(MainConsoleWindow(tasks))
+window_manager.add_new_window(MainConsoleWindow(tasks, MenuSettings()))
 window_manager.show_current_window()
 
 """

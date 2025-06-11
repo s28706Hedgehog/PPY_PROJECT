@@ -57,4 +57,6 @@ singleton
 synchronized block:
     https://theorangeduck.com/page/synchronized-python
 
+string concatenation
+    https://waymoot.org/home/python_string/
 TODO: Check for return types of functions

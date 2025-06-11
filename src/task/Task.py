@@ -135,6 +135,35 @@ class Task:
                 'finishDate': self.finishDate.isoformat() if self.finishDate else None,
                 'deadlineDate': self.deadlineDate.isoformat(), 'command': self.command}
 
+    def get_field_by_name(self, field_name: str):
+        match field_name:
+            case 'id':
+                return self.id
+            case 'name':
+                return self.name
+            case 'state':
+                return self.state
+            case 'priority':
+                return self.priority
+            case 'category':
+                return self.category
+            case 'description':
+                return self.description
+            case 'beginDate':
+                return self.beginDate
+            case 'finishDate':
+                return self.finishDate
+            case 'deadlineDate':
+                return self.deadlineDate
+            case 'command':
+                return self.command
+            case 'commandThread':
+                return self.commandThread
+            case 'commandProcess':
+                return self.commandProcess
+            case _d:
+                return str(FieldNotFoundException(f"Class Task does not have field '{field_name}'"))
+
     def __str__(self):
         return (
             f"Task '{self.name}':\n"
@@ -147,3 +176,8 @@ class Task:
             f"  Finish datetime: {self.finishDate.isoformat() if self.finishDate else 'None'}\n"
             f"  Deadline datetime: {self.deadlineDate.isoformat() if self.deadlineDate else 'None'}\n"
             f"  Command: {self.command}")
+
+
+class FieldNotFoundException(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)

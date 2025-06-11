@@ -7,6 +7,38 @@ from enum import Enum
 from typing import Optional
 
 
+class MenuSettings:
+    __slots__ = ['task_filter', 'task_sort', 'task_print', 'task_print_allowed']
+    task_filter: list[str]
+    task_sort: list[str]
+    task_print: list[str]
+    task_print_allowed: list[str]
+
+    def __init__(self):
+        self.task_print_allowed = ['id', 'name', 'state', 'priority', 'category', 'description', 'beginDate',
+                                   'finishDate', 'deadlineDate', 'command', 'commandThread', 'commandProcess']
+        self.task_print = ['id', 'name', 'command', 'state']
+
+    def get_task_print_msg(self, task: Task) -> str:
+        msg_list = []
+        for i in range(0, len(self.task_print_allowed)):
+            field_name = self.task_print_allowed[i]
+            if self.task_print.__contains__(field_name):
+                msg_list.append(field_name)
+                msg_list.append(' [')
+                msg_list.append(str(task.get_field_by_name(field_name)))
+                msg_list.append('] ')
+
+        return ''.join(msg_list)
+
+    def get_tasks_print_msg(self, tasks: list[Task]) -> str:
+        tsk_msg_list = []
+        for tsk in tasks:
+            tsk_msg_list.append(self.get_task_print_msg(tsk))
+            tsk_msg_list.append('\n\n')
+        return ''.join(tsk_msg_list)
+
+
 class ActionResultTypeEnum(Enum):
     DO_NOTHING = 1,
     SHOW_NEXT = 2
@@ -167,20 +199,23 @@ class ConsoleWindowManager:
 
 
 class MainConsoleWindow(ConsoleWindowAbstract):
-    __slots__ = ['tasks']
+    __slots__ = ['tasks', 'settings']
     tasks: list[Task]
+    settings: MenuSettings
 
-    def __init__(self, tasks: list[Task]):
+    def __init__(self, tasks: list[Task], settings: MenuSettings):
         super().__init__(
             {1: "browse tasks", 2: "show statistics"},
             {1: self.browse_tasks, 2: None}
         )
         self.tasks = tasks
+        self.settings = settings
 
     def print_tasks(self):
-        for task in self.tasks:
-            print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
-                  task.state, ']', end='\n\n')
+        print(self.settings.get_tasks_print_msg(self.tasks))
+        #for task in self.tasks:
+        #    print('ID [', task.id, '], Name [', task.name, '], Command [', task.command, ']', ', State [',
+        #          task.state, ']', end='\n\n')
 
     def browse_tasks(self) -> ActionResult:
         self.print_tasks()
